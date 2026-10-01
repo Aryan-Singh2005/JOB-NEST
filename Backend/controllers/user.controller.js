@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 export const register = async (req, res) =>{
     try {
         const{ fullname, email, phoneNumber, password, role} = req.body;
-        if (!fullname || !email || phoneNumber || !password || !role){
+        if (!fullname || !email || !phoneNumber || !password || !role){
             return res.status(404).json({
                 message: "Missing required fields",
                 success: false,
@@ -28,8 +28,10 @@ export const register = async (req, res) =>{
             role,
         });
 
+        await newUser.save();
+
         return res.status(200).json({
-            message: `Account created succesfully $(fullname)`,
+            message: `Account created succesfully ${fullname}`,
             success: true,
         });
 
@@ -58,7 +60,7 @@ export const login = async (req,res) => {
                 success: false,
             });
         }
-        const isMatch =  await bycrypt.compare(password, user.password);
+        const isMatch =  await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(404).json({
                 message: "Incorrect email or password",
@@ -66,7 +68,7 @@ export const login = async (req,res) => {
         }
         //check role correctly or not
         if (user.role !== role) {
-            return res.sstatus(403).json({
+            return res.status(403).json({
                 message: "you don't have the necessary role to access this resource",
                 success: false,
             });
@@ -91,10 +93,10 @@ export const login = async (req,res) => {
                                                             // one multiply by 24 hr * 60min * 60 sec * 1000 milsec
             return res.status(200).cookie("token",token,{maxAge: 1*24*60*60*1000,
                 httpOnly: true,
-                sameSite: strict
+                sameSite: "Strict"
         })
         .json({
-            message: `Welcome back $(user.fullname)`,
+            message: `Welcome back ${user.fullname}`,
             user,
             success: true,
         });
@@ -117,7 +119,7 @@ export const logout = (req, res)=> {
         console.error(error);
         res.status(500).json({
             message: "Server Error login failed",
-            successs: false,
+            success: false,
         });
     }
 };
@@ -126,20 +128,14 @@ export const updateProfile = async (req,res)=> {
     try{
         const{fullname, email, phoneNumber, bio, skills} = req.body;
         const file = req.files;
-        if (!fullname || !email || !phoneNumber || !bio || !skills) {
-            return res.status(404).json({
-                message: "Missing required fields",
-                success: false,
-            });
-        }
+        
 
           //cloudinary upload
+        let skillsArray;
+        if (skills) {
+            skillsArray = skills.split(",");
+        }
 
-
-
-
-
-        const skillsArray = skills.split(",");
         const userId = req.id;    //middleware authentication
         let user = await User.findById(userId);
         if(!user) {
@@ -149,11 +145,23 @@ export const updateProfile = async (req,res)=> {
             });
         }
 
-        user.fullname = fullname;
-        user.email= email;
-        user.phoneNumber = phoneNumber;
-        user.bio = bio;
-        user.skills = skillsArray;
+        // update database profile
+        if (fullname) {
+            user.fullname = fullname;
+        }
+        if (email) {
+            user.email = email;
+        }
+        if (phoneNumber) {
+            user.phoneNumber = phoneNumber;
+        }
+        if (bio) {
+            user.profile.bio = bio;
+        }
+        if (skills) {
+            user.profile.skills = skillsArray;
+        }
+        
         //resume
         await user.save();
 
@@ -171,7 +179,7 @@ export const updateProfile = async (req,res)=> {
             user,
             success: true,
         });
-        
+
     }catch(error){
         console.error(error);
         res.status(500).json({
