@@ -8,6 +8,7 @@ import axios from "axios";
 import { USER_API_ENDPOINT } from "@/utils/data";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "@/redux/authSlice";
 
 const Register = () => {
     const [input, setInput] = useState({
@@ -108,7 +109,7 @@ const Register = () => {
 
                             </div>
                         ) : (
-                                <button type="submit" className="block w-full py-3 my-3 text-white bg-black hover:bg-gray-800 rounded-mid">Register</button>
+                                <button type="submit" className="block w-full py-3 my-3 text-white bg-black hover:bg-gray-800 rounded-md">Register</button>
                         )}
                         
                         {/* already account login*/}

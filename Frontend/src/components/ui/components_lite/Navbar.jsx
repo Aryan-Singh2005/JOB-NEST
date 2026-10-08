@@ -4,24 +4,25 @@ import { Avatar, AvatarImage } from "../avatar";
 import { Button } from '../button';
 import { LogOut, User2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 
 const Navbar = () => {
-    const user = false;
+    const { user } = useSelector((store) => store.auth);  
     return (
         <div className="bg-white">
            <div className="flex items-center justify-between mx-auto max-w-7xl h-16">
              <div>
                 <h1 className="text-2xl font-bold">
-                    Job <span className="text-[#022bf8]
-                    ">Nest</span>
+                    <span className="text-[#6B3AC2]">Job</span>
+                    <span className="text-[#FA4F09]">Nest</span>
                 </h1>
             </div>
             <div className="flex items-center gap-10">
                 <ul className="flex font-medium items-center gap-6">
-                    <li>Home</li>
-                    <li>Browse</li>
-                    <li>Jobs</li>
+                    <Link to ="/Home">Home</Link>
+                    <Link to ="/Browse">Browse</Link>
+                    <Link to="/Jobs">Jobs</Link>
                 </ul>
                 
                    { !user ? (
@@ -41,12 +42,12 @@ const Navbar = () => {
                         <Avatar className="cursor-pointer">
                             <AvatarImage
                             src="https://github.com/shadcn.png"
-                            alt="@shadcn"
+                            alt={user?.fullname}
                             />
                         </Avatar>
                     </PopoverTrigger>
                     <PopoverContent className="w-80">
-                        <div className="">
+                        <div className="flex items-center gap-4 space-y-2">
                             <Avatar className="cursor-pointer">
                             <AvatarImage
                             src="https://github.com/shadcn.png"
@@ -54,7 +55,7 @@ const Navbar = () => {
                             />
                         </Avatar>
                         <div>
-                        <h3 className="font-medium">Aryan Singh</h3>
+                        <h3 className="font-medium">{user?.fullname}</h3>
                         <p className="text-sm text-gray-500">
                             Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                         </p>
@@ -63,7 +64,7 @@ const Navbar = () => {
                         <div className="flex flex-col my-2 text-gray-600 ">
                             <div className="flex w-fit items-center gap-2 cursor-pointer">
                                 <User2 className="text-black"></User2>
-                                <Button variant="link" className="text-black">Profile</Button>
+                                <Button variant="link" className="text-black"><Link to="/Profile"> Profile</Link></Button>
                             </div>
                         </div>
                         
