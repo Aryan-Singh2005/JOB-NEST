@@ -38,9 +38,11 @@ const Register = () => {
         formData.append("password", input.password);
         formData.append("role", input.role);
         formData.append("phoneNumber", input.phoneNumber);
-        if(input.file){
-            formData.append("file",input.file);
+        if(!input.file){
+            toast.error("Please select a profile photo");
+            return;
         }
+        formData.append("file",input.file);
         try {
             dispatch(setLoading(true));
             const res= await axios.post(`${USER_API_ENDPOINT}/register`, formData,{

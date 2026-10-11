@@ -18,7 +18,7 @@ const Login = () => {
         });
         const navigate = useNavigate();
         const dispatch = useDispatch();
-        const { loading } = useSelector((store) => store.auth);
+        const { loading, user } = useSelector((store) => store.auth);
         const changeEventHandler = (e) => {
             setInput({...input, [e.target.name]: e.target.value});
         };
@@ -29,21 +29,17 @@ const Login = () => {
         const submitHandler = async (e) => {
         e.preventDefault();
         console.log("Login Data:",input)
-        const formData = new FormData();
-        
         
         try {
             dispatch(setLoading(true));
-            const res= await axios.post(`${USER_API_ENDPOINT}/login`, input,{
-                headers: {
-                    "Content-Type": "application/json",
-                },
+            const res= await axios.post(`${USER_API_ENDPOINT}/login`,input, {
+                headers: {"Content-Type":"application/json"},
                 withCredentials: true,
             });
             if(res.data.success){
                 dispatch(setUser(res.data.user));
                 navigate("/");
-                toast.success(res.data.message);
+                toast.success(res.data.message || "Login failed");
             }
         } catch (error) {
             console.log(error);
@@ -94,7 +90,7 @@ const Login = () => {
 
                             </div>
                         ) : (
-                                <button className="block w-3/4 py-3 my-3 text-white flex items-center justify-center max-w-7xl mx-auto bg-blue-600 hover:bg-blue-800 rounded-md">Login</button>
+                                <button type="submit" className="block w-3/4 py-3 my-3 text-white flex items-center justify-center max-w-7xl mx-auto bg-blue-600 hover:bg-blue-800 rounded-md">Login</button>
                         )}
                        
                         

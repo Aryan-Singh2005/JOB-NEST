@@ -12,8 +12,8 @@ const authSlice = createSlice({
         },
         setUser: (state, action) => {
             state.user = action.payload;
-        }
-    }
+        },
+    },
 });
    // Export the actions
 export const { setLoading,setUser } = authSlice.actions;

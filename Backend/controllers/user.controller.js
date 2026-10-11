@@ -1,6 +1,8 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import getDataUri from "../utils/datauri.js";
+import cloudinary from "../utils/cloud.js";
 
 export const register = async (req, res) =>{
     try {
@@ -11,6 +13,10 @@ export const register = async (req, res) =>{
                 success: false,
             });
         }
+        const file = req.file;
+        const fileUri = getDataUri(file);
+        const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+
         const user = await User.findOne({email});
         if (user) {
             return res.status(400).json({
@@ -26,6 +32,9 @@ export const register = async (req, res) =>{
             phoneNumber,
             password: hashedPassword,
             role,
+            profile:{
+                profilePhoto: cloudResponse.secure_url,
+            }
         });
 
         await newUser.save();
@@ -127,10 +136,20 @@ export const logout = (req, res)=> {
 export const updateProfile = async (req,res)=> {
     try{
         const{fullname, email, phoneNumber, bio, skills} = req.body;
-        const file = req.files;
+        const file = req.file;
+        console.log(fullname,email,phoneNumber,bio,skills);
         
 
           //cloudinary upload
+          let cloudinaryResponse;
+          if(file){
+            const fileUri = getDataUri(file);
+            cloudinaryResponse = await cloudinary.uploader.upload(fileUri.content, {
+            resource_type:"raw",
+        });
+    }
+        
+
         let skillsArray;
         if (skills) {
             skillsArray = skills.split(",");
@@ -163,8 +182,14 @@ export const updateProfile = async (req,res)=> {
         }
         
         //resume
-        await user.save();
+        if(cloudinaryResponse){
+            user.profile.resume = cloudinaryResponse.secure_url;
+            user.profile.resumeOriginalname = file.originalname;
+        }
 
+        // Save updated user
+        await user.save();
+        
         user = {
             _id: user._id,
             fullname: user.fullname,
