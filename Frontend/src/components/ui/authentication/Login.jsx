@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import Navbar from "../components_lite/Navbar";
 import { Label } from "../label";
 import { Input } from "../input";
@@ -19,6 +19,13 @@ const Login = () => {
         const navigate = useNavigate();
         const dispatch = useDispatch();
         const { loading, user } = useSelector((store) => store.auth);
+
+        useEffect(() => {
+            if (user) {
+                navigate("/");
+            }
+        }, [user, navigate]);
+
         const changeEventHandler = (e) => {
             setInput({...input, [e.target.name]: e.target.value});
         };

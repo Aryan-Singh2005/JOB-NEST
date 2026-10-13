@@ -7,11 +7,12 @@ import { Badge } from "../badge";
 import AppliedJob from "./AppliedJob";
 import EditProfileModal from "./EditProfileModal";
 import { useSelector } from "react-redux";
+import useGetAllAppliedJobs from "@/hooks/useGetAllAppliedJobs";
 
 
-// const skills = ["React","JavaScript","HTML","CSS","Python","Node.js","MongoDB","MySQL","Redux","Tailwind CSS","Docker","Kubernetes"];
 const isResume = true;
 const Profile = () => {
+    useGetAllAppliedJobs();
     const [open, setOpen] = useState(false);
     const {user} = useSelector((store) => store.auth);
     return (

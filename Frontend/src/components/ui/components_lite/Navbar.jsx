@@ -107,8 +107,8 @@ const Navbar = () => {
                             )}
 
                             <div className="flex w-fit items-center gap-2 cursor-pointer">
-                                <LogOut></LogOut>
-                                <Button onClick={logoutHandler} variant="link">Logout</Button>
+                                <LogOut className="text-black"></LogOut>
+                                <Button onClick={logoutHandler} variant="link" className="text-black">Logout</Button>
                             </div>
                         </div>
                     </PopoverContent>

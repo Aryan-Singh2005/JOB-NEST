@@ -32,9 +32,9 @@ const description = () => {
                 console.log("Job Keys:", Object.keys(res.data.job));
                 if (res.data.status) {
                     dispatch(setSingleJob(res.data.job));
-                    setIsApplied(res.data.job.applications?.some((application) =>
+                    setIsApplied(user ? res.data.job.applications?.some((application) =>
                         String(
-                            typeof application.applicant === "object" ? application.applicant?._id: application.applicant) === String(user?._id) ) || false 
+                            typeof application.applicant === "object" ? application.applicant?._id: application.applicant) === String(user?._id) ) || false : false
                         );
                 }else{
                     setError("Failed to fetch job.");
@@ -55,6 +55,11 @@ const description = () => {
     }
     
     const applyJobHandler = async () => {
+        if (!user) {
+            toast.error("Please login to apply for jobs");
+            navigate("/login");
+            return;
+        }
         try {
             const res = await axios.get(`${APPLICATION_API_ENDPOINT}/apply/${jobId}`,
                 { withCredentials: true }
@@ -80,8 +85,8 @@ const description = () => {
                     <div>
                     <h1 className="font-bold text-xl">{singleJob?.title}</h1>
                     <div className="flex gap-2 items-center mt-4">
-                <Badge className={"text-blue-600 font-bold"} variant={"ghost"}>{singleJob?.position}</Badge>
-                <Badge className={"text-[#FA4F09] font-bold"} variant={"ghost"}>{singleJob?.salary}LPA</Badge>
+                <Badge className={"text-blue-600 font-bold"} variant={"ghost"}>{singleJob?.position} Open Positions</Badge>
+                <Badge className={"text-[#FA4F09] font-bold"} variant={"ghost"}>{singleJob?.salary} LPA</Badge>
                 <Badge className={"text-[#6B3AC2] font-bold"} variant={"ghost"}>{singleJob?.location}</Badge>
                 <Badge className={"text-black font-bold"} variant={"ghost"}>{singleJob?.jobType}</Badge>
             </div>
@@ -93,16 +98,16 @@ const description = () => {
             <h1 className="border-b-2 border-b-gray-400 font-medium py-4">{singleJob?.description}</h1>
             <div className="my-4">
                 <h1 className="font-bold my-1">
-                Role: <span className="pl-4 font-normal text-gray-800">{singleJob?.position}</span>
+                Role: <span className="pl-4 font-normal text-gray-800">{singleJob?.position} Open Positions</span>
                 </h1>
                 <h1 className="font-bold my-1">
                 Location: <span className="pl-4 font-normal text-gray-800">{singleJob?.location}</span>
                 </h1>
                 <h1 className="font-bold my-1">
-                Salary: <span className="pl-4 font-normal text-gray-800">{singleJob?.salary}</span>
+                Salary: <span className="pl-4 font-normal text-gray-800">{singleJob?.salary} LPA</span>
                 </h1>
                 <h1 className="font-bold my-1">
-                Experience: <span className="pl-4 font-normal text-gray-800">{singleJob?.experience}</span>
+                Experience: <span className="pl-4 font-normal text-gray-800">{singleJob?.experience} Year</span>
                 </h1>
                 <h1 className="font-bold my-1">
                 Job Type: <span className="pl-4 font-normal text-gray-800">{singleJob?.jobType}</span>

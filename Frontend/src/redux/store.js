@@ -17,6 +17,7 @@ import {
 } from "redux-persist";
 
 import createWebStorage from "redux-persist/es/storage/createWebStorage";
+import applicationReducer from "./applicationSlice";
 
 const createNoopStorage = () => ({
   getItem: (_key) => Promise.resolve(null),
@@ -42,6 +43,7 @@ const rootReducer = combineReducers({
   job: jobSlice,
   jobs:jobReducer,
   company: companyReducer,
+  application: applicationReducer,
 });
 
 const persistedReducer = persistReducer(

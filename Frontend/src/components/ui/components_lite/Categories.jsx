@@ -1,6 +1,9 @@
 import React from 'react'
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '../carousel';
 import { Button } from '../button';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { setSearchedQuery } from '@/redux/jobSlice';
 
 const Category = [
     "Frontend Developer",
@@ -19,6 +22,14 @@ const Category = [
 ];
 
 const Categories = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const searchJobHandler = (category) => {
+        dispatch(setSearchedQuery(category));
+        navigate("/browse");
+    };
+
     return (
         <div>
             <h1 className="text-2xl font-bold text-center text-blue-600">
@@ -29,16 +40,20 @@ const Categories = () => {
             </p>
             <Carousel className="w-full max-w-xl mx-auto my-20">
             <CarouselContent>
-                    
-                       {Category.map((category, index) => {
-                            return (
-                                <CarouselItem
-                                key={index}
-                                 className="md:basis-1/2 lg-basis-1/3">
-                                    <Button className="bg-black text-white hover:bg-gray-800">{category}</Button>
-                                    </CarouselItem>
-                            );     
-                        })}
+                {Category.map((category, index) => {
+                    return (
+                        <CarouselItem
+                            key={index}
+                            className="md:basis-1/2 lg-basis-1/3">
+                            <Button 
+                                onClick={() => searchJobHandler(category)}
+                                className="bg-black text-white hover:bg-gray-800"
+                            >
+                                {category}
+                            </Button>
+                        </CarouselItem>
+                    );    
+                })}
             </CarouselContent>
             <CarouselPrevious/>
             <CarouselNext/>

@@ -12,6 +12,11 @@ import Description from "./components/ui/components_lite/Description";
 import Companies from "./components/ui/admincomponent/Companies";
 import CompanyCreate from "./components/ui/admincomponent/CompanyCreate";
 import CompanySetup from "./components/ui/admincomponent/CompanySetup";
+import AdminJobs from "./components/ui/admincomponent/AdminJobs";
+import PostJob from "./components/ui/admincomponent/PostJob";
+import Applicants from "./components/ui/admincomponent/Applicants";
+import EditJob from "./components/ui/admincomponent/EditJob";
+import ProtectedRoute from "./components/ui/admincomponent/ProtectedRoute";
 
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home/>},
@@ -55,16 +60,36 @@ const appRouter = createBrowserRouter([
   // admin
   {
     path: "/admin/companies",
-    element: <Companies/>,
+    element: <ProtectedRoute><Companies/></ProtectedRoute>,
   },
   {
     path: "/admin/companies/create",
-    element: <CompanyCreate/>,
+    element: <ProtectedRoute><CompanyCreate/></ProtectedRoute>,
   },
   {
     path: "/admin/companies/:id",
-    element: <CompanySetup/>,
-  }
+    element: <ProtectedRoute><CompanySetup/></ProtectedRoute>,
+  },
+  {
+    path: "/admin/jobs",
+    element: <ProtectedRoute><AdminJobs/></ProtectedRoute>,
+  },
+  {
+    path: "/admin/jobs/create",
+    element: <ProtectedRoute><PostJob /></ProtectedRoute>,
+  },
+  {
+    path: "/admin/jobs/:id",
+    element: <ProtectedRoute><PostJob /></ProtectedRoute>,
+  },
+  {
+    path: "/admin/jobs/edit/:id",
+    element: <ProtectedRoute><EditJob /></ProtectedRoute>,
+  },
+  {
+    path: "/admin/jobs/:id/applicants",
+    element: <ProtectedRoute><Applicants /></ProtectedRoute>,
+  },
 ]);
 
 function App() {

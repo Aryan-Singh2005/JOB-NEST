@@ -1,7 +1,7 @@
 import React, { use, useEffect, useState } from "react";
 import Navbar from "../components_lite/Navbar";
 import { Button } from "../button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Label } from "../label";
 import { Input } from "../input";
 import { useNavigate, useParams } from "react-router-dom";
@@ -122,7 +122,13 @@ const CompanySetup = () => {
                     <Input type="file" name="file" accept="image/*" onChange={ changeFileHandler } />
                     </div>
                     </div>
-                    <Button type="submit" className="w-full mt-8 bg-[#4F46E5] text-white hover:bg-[#4338CA]">Update</Button>
+                    {loading ? (
+                        <Button className="w-full my-4">
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin"/> Please wait
+                        </Button>
+                    ):(
+                        <Button type="submit" className="w-full mt-8 bg-[#4F46E5] text-white hover:bg-[#4338CA]">Update</Button>
+                    )}
                 </form>
             </div>
         </div>

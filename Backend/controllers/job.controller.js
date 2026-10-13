@@ -59,8 +59,7 @@ export  const getJobById = async (req,res) => {
         const job = await Job.findById(jobId).populate({
             path: "applications",
         });
-        console.log("Created At from DB:", job?.createdAt);
-        console.log("Full Job:",job);
+        
         if (!job) {
             return res.status(400).json({ message: "Job not found", status:false});
         }
@@ -79,7 +78,9 @@ export  const getJobById = async (req,res) => {
 export const getAdminJobs = async (req,res) => {
     try {
         const adminId = req.id;
-        const jobs = await Job.find({created_by: adminId});
+        const jobs = await Job.find({created_by: adminId}).populate({
+            path: 'company',
+        }).sort({createdAt: -1});
         if (!jobs) {
             return res.status(404).json({message: "No jobs found", status: false});
         }
@@ -89,3 +90,38 @@ export const getAdminJobs = async (req,res) => {
         return res.status(500).json({ message: "Server Error", status: false});
     }
 };
+
+
+export const updateJob = async (req, res) => {
+    try {
+        const { title, description, requirements, salary, location, jobType, position, experience } = req.body;
+        const jobId = req.params.id;
+
+        const updateData = {
+            title,
+            description,
+            requirements,
+            salary: salary ? Number(salary) : undefined,
+            location,
+            jobType,
+            position: position ? Number(position) : undefined,
+            experience: experience ? Number(experience) : undefined,
+        };
+
+        const job = await Job.findByIdAndUpdate(jobId, updateData, { new: true });
+
+        if (!job) {
+            return res.status(404).json({ message: "Job not found", status: false });
+        }
+
+        return res.status(200).json({
+            message: "Job updated successfully",
+            job,
+            status: true
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Server Error", status: false });
+    }
+};
+
