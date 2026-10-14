@@ -15,7 +15,7 @@ const Jobs = () => {
     };
 
     useEffect(() => {
-        let filtered = allJobs;
+        let filtered = allJobs || [];
 
         // 1. Text search query filter
         if (searchedQuery && searchedQuery.trim() !== "") {
@@ -40,6 +40,15 @@ const Jobs = () => {
                     if (val.includes("3-6")) return jobSalary > 3 && jobSalary <= 6;
                     if (val.includes("6-10")) return jobSalary > 6 && jobSalary <= 10;
                     if (val.includes("10+")) return jobSalary >= 10;
+                }
+
+                // Check if experience range is selected
+                if (val.includes("year")) {
+                    const jobExp = Number(job?.experience) || 0;
+                    if (val.includes("0-3")) return jobExp >= 0 && jobExp <= 3;
+                    if (val.includes("3-5")) return jobExp > 3 && jobExp <= 5;
+                    if (val.includes("5-7")) return jobExp > 5 && jobExp <= 7;
+                    if (val.includes("7+")) return jobExp >= 7;
                 }
 
                 // Normal string matching for Location, Tech, Experience
