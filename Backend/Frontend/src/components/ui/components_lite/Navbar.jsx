@@ -101,18 +101,18 @@ const Navbar = () => {
                             {user && user.role === 'Student' && (
                                 <>
                                 <div className="flex w-fit items-center gap-2 cursor-pointer">
-                                    <User2 className="text-black h-4 w-4"></User2>
+                                    <User2 className="text-black"></User2>
                                     <Button variant="link" className="text-black"><Link to="/Profile">Profile</Link></Button>
                                 </div>
                                 <div className="flex w-fit items-center gap-2 cursor-pointer">
-                                    <Bookmark className="text-black h-4 w-4"></Bookmark>
+                                    <Bookmark className="text-black"></Bookmark>
                                     <Button variant="link" className="text-black"><Link to="/saved-jobs">Saved Jobs</Link></Button>
                                 </div>
                                 </>
                             )}
 
                             <div className="flex w-fit items-center gap-2 cursor-pointer">
-                                <LogOut className="text-black h-4 w-4"></LogOut>
+                                <LogOut className="text-black"></LogOut>
                                 <Button onClick={logoutHandler} variant="link" className="text-black">Logout</Button>
                             </div>
                         </div>
