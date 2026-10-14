@@ -67,7 +67,6 @@ const Description = () => {
     const applyJobHandler = async () => {
         if (!user) {
             toast.error("Please login to apply for jobs");
-            navigate("/login");
             return;
         }
         try {
