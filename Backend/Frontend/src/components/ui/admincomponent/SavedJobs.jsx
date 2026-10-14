@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components_lite/Navbar";
-import Job1 from "./Job1";
+import Job1 from "../components_lite/Job1";
 import axios from "axios";
 import { USER_API_ENDPOINT } from "@/utils/data";
 import { useSelector } from "react-redux";
