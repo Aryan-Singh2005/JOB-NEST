@@ -9,34 +9,39 @@ import { toast } from 'sonner';
 import { USER_API_ENDPOINT } from '@/utils/data';
 import { setUser } from '@/redux/authSlice';
 import axios from 'axios';
+import { persistor } from '@/redux/store';
 
 const Navbar = () => {
     const { user } = useSelector((store) => store.auth);  
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     const logoutHandler = async () => {
-    try {
-      const res = await axios.post(`${USER_API_ENDPOINT}/logout`, {
-        withCredentials: true,
-      });
-      if (res && res.data && res.data.success) {
-        dispatch(setUser(null));
-        navigate("/");
-        toast.success(res.data.message);
-      } else {
-        console.error("Error logging out:", res.data);
-      }
-    } catch (error) {
-      console.error("Axios error:", error);
-      if (error.response) {
-        console.error("Error response:", error.response.data);
-      }
-      toast.error("Error logging out. Please try again.");
-    }
-  };
+        try {
+            const res = await axios.post(`${USER_API_ENDPOINT}/logout`, {}, {
+                withCredentials: true,
+            });
+            if (res && res.data && res.data.success) {
+                dispatch(setUser(null));
+                await persistor.purge();
+                localStorage.removeItem("persist:root");
+                navigate("/");
+                toast.success(res.data.message);
+            } else {
+                console.error("Error logging out:", res.data);
+            }
+        } catch (error) {
+            console.error("Axios error:", error);
+            if (error.response) {
+                console.error("Error response:", error.response.data);
+            }
+            toast.error("Error logging out. Please try again.");
+        }
+    };
+
     return (
         <div className="bg-white">
-           <div className="flex items-center justify-between mx-auto max-w-7xl h-16">
+            <div className="flex items-center justify-between mx-auto max-w-7xl h-16">
               <div>
                 <h1 className="text-2xl font-bold">
                     <span className="text-[#6B3AC2]">Job</span>
@@ -47,7 +52,7 @@ const Navbar = () => {
                 <ul className="flex font-medium items-center gap-6">
                     {user && user.role === "Recruiter"?(
                             <>
-                           <li><Link to ="/admin/companies">Companies</Link></li>
+                            <li><Link to ="/admin/companies">Companies</Link></li>
                             <li><Link to ="/admin/jobs">Jobs</Link></li>
                             </>
                         ) : (
