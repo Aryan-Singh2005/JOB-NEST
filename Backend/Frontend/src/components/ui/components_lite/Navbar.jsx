@@ -2,14 +2,13 @@ import React from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from "../popover";
 import { Avatar, AvatarImage } from "../avatar";
 import { Button } from '../button';
-import { LogOut, User2 } from 'lucide-react';
+import { LogOut, User2, Bookmark } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner';
 import { USER_API_ENDPOINT } from '@/utils/data';
 import { setUser } from '@/redux/authSlice';
 import axios from 'axios';
-
 
 const Navbar = () => {
     const { user } = useSelector((store) => store.auth);  
@@ -38,7 +37,7 @@ const Navbar = () => {
     return (
         <div className="bg-white">
            <div className="flex items-center justify-between mx-auto max-w-7xl h-16">
-             <div>
+              <div>
                 <h1 className="text-2xl font-bold">
                     <span className="text-[#6B3AC2]">Job</span>
                     <span className="text-[#FA4F09]">Nest</span>
@@ -73,7 +72,7 @@ const Navbar = () => {
                             </Link>
                         </div>
                     ) : (
-                         <Popover>
+                       <Popover>
                     <PopoverTrigger asChild>
                         <Avatar className="cursor-pointer">
                             <AvatarImage
@@ -100,10 +99,16 @@ const Navbar = () => {
                         
                             <div className="flex flex-col my-2 text-gray-600 ">
                             {user && user.role === 'Student' && (
-                            <div className="flex w-fit items-center gap-2 cursor-pointer">
-                                <User2 className="text-black"></User2>
-                                <Button variant="link" className="text-black"><Link to="/Profile"> Profile</Link></Button>
-                            </div>
+                                <>
+                                <div className="flex w-fit items-center gap-2 cursor-pointer">
+                                    <User2 className="text-black"></User2>
+                                    <Button variant="link" className="text-black"><Link to="/Profile">Profile</Link></Button>
+                                </div>
+                                <div className="flex w-fit items-center gap-2 cursor-pointer">
+                                    <Bookmark className="text-black h-4 w-4 ml-1"></Bookmark>
+                                    <Button variant="link" className="text-black"><Link to="/saved-jobs">Saved Jobs</Link></Button>
+                                </div>
+                                </>
                             )}
 
                             <div className="flex w-fit items-center gap-2 cursor-pointer">

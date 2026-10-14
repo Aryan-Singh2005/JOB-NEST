@@ -24,7 +24,6 @@ export const register = async (req, res) =>{
                 success: false,
             });
         }
-        // convert passwords to hashes
         const hashedPassword = await bcrypt.hash(password,10);
         const newUser = new User({
             fullname,
@@ -56,7 +55,7 @@ export const register = async (req, res) =>{
 export const login = async (req,res) => {
     try {
         const {email, password, role}= req.body;
-          if (!email || !password || !role) {
+         if (!email || !password || !role) {
             return res.status(404).json({
                 message: "Missing required fields",
                 success: false,
@@ -75,7 +74,6 @@ export const login = async (req,res) => {
                 message: "Incorrect email or password",
             });
         }
-        //check role correctly or not
         if (user.role !== role) {
             return res.status(403).json({
                 message: "you don't have the necessary role to access this resource",
@@ -83,13 +81,12 @@ export const login = async (req,res) => {
             });
         }
 
-        // generate token 
         const tokenData= {
             userId: user._id,
         };
         const token = await jwt.sign(tokenData, process.env.JWT_SECRET,{
              expiresIn: "1d",
-            });
+             });
 
         user = {
             _id: user._id,
@@ -99,7 +96,7 @@ export const login = async (req,res) => {
             role: user.role,
             profile: user.profile, 
         };
-                                                            // one multiply by 24 hr * 60min * 60 sec * 1000 milsec
+            
             return res.status(200).cookie("token",token,{maxAge: 1*24*60*60*1000,
                 httpOnly: true,
                 sameSite: "Strict"
@@ -137,10 +134,7 @@ export const updateProfile = async (req,res)=> {
     try{
         const{fullname, email, phoneNumber, bio, skills} = req.body;
         const file = req.file;
-        console.log(fullname,email,phoneNumber,bio,skills);
         
-
-          //cloudinary upload
           let cloudinaryResponse;
           if(file){
             const fileUri = getDataUri(file);
@@ -149,13 +143,12 @@ export const updateProfile = async (req,res)=> {
         });
     }
         
-
         let skillsArray;
         if (skills) {
             skillsArray = skills.split(",");
         }
 
-        const userId = req.id;    //middleware authentication
+        const userId = req.id;    
         let user = await User.findById(userId);
         if(!user) {
             return res.status(404).json({
@@ -164,7 +157,6 @@ export const updateProfile = async (req,res)=> {
             });
         }
 
-        // update database profile
         if (fullname) {
             user.fullname = fullname;
         }
@@ -181,13 +173,11 @@ export const updateProfile = async (req,res)=> {
             user.profile.skills = skillsArray;
         }
         
-        //resume
         if(cloudinaryResponse){
             user.profile.resume = cloudinaryResponse.secure_url;
             user.profile.resumeOriginalname = file.originalname;
         }
 
-        // Save updated user
         await user.save();
         
         user = {
@@ -211,5 +201,53 @@ export const updateProfile = async (req,res)=> {
             message: "Server Error updating profile",
             success: false,
         });
+    }
+};
+
+// Toggle Save/Unsave Job
+export const toggleSaveJob = async (req, res) => {
+    try {
+        const userId = req.id;
+        const jobId = req.params.id;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        const isSaved = user.savedJobs.includes(jobId);
+
+        if (isSaved) {
+            user.savedJobs.pull(jobId);
+            await user.save();
+            return res.status(200).json({ success: true, message: "Job removed from saved list", saved: false });
+        } else {
+            user.savedJobs.push(jobId);
+            await user.save();
+            return res.status(200).json({ success: true, message: "Job saved successfully", saved: true });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Server Error toggling saved job" });
+    }
+};
+
+// Get Saved Jobs for logged-in user
+export const getSavedJobs = async (req, res) => {
+    try {
+        const userId = req.id;
+        const user = await User.findById(userId).populate({
+            path: 'savedJobs',
+            populate: {
+                path: 'company'
+            }
+        });
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        return res.status(200).json({ success: true, savedJobs: user.savedJobs });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Server Error fetching saved jobs" });
     }
 };

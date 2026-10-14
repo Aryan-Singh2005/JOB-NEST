@@ -1,12 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "../button";
 import { Bookmark } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 import { Badge } from "../badge";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { USER_API_ENDPOINT } from "@/utils/data";
+import { toast } from "sonner";
 
 const Job1 = ({ job }) => {
     const navigate = useNavigate();
+    const { user } = useSelector((store) => store.auth);
+
+    const [isSaved, setIsSaved] = useState(
+        user?.savedJobs?.includes(job?._id) || false
+    );
+
+    const saveJobHandler = async (e) => {
+        e.stopPropagation();
+        if (!user) {
+            toast.error("Please login to save jobs");
+            return;
+        }
+
+        try {
+            const res = await axios.post(
+                `${USER_API_ENDPOINT}/save/${job?._id}`,
+                {},
+                { withCredentials: true }
+            );
+            if (res.data.success) {
+                setIsSaved(res.data.saved);
+                toast.success(res.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Error updating saved job");
+        }
+    };
 
     const daysAgo = (mongodbTime) => {
         const createdAt = new Date(mongodbTime);
@@ -30,8 +62,13 @@ const Job1 = ({ job }) => {
                         ? `${daysAgo(job.updatedAt)} days ago`
                         : ""}
                 </p>
-                <Button variant="outline" className="rounded-full" size="icon" onClick={(e) => e.stopPropagation()}>
-                    <Bookmark />
+                <Button 
+                    variant="outline" 
+                    className="rounded-full" 
+                    size="icon" 
+                    onClick={saveJobHandler}
+                >
+                    <Bookmark className={isSaved ? "fill-current text-[#6B3AC2]" : "text-gray-600"} />
                 </Button>
             </div>
 
@@ -79,10 +116,11 @@ const Job1 = ({ job }) => {
                     Details
                 </Button>
                 <Button
+                    onClick={saveJobHandler}
                     variant="outline"
                     className="bg-[#6B3AC2] text-white font-bold rounded-sm hover:bg-black hover:text-white"
                 >
-                    Save For Later
+                    {isSaved ? "Saved" : "Save For Later"}
                 </Button>
             </div>
         </div>
