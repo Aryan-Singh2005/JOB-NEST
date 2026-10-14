@@ -9,7 +9,7 @@ const useGetAllAppliedJobs = () => {
     useEffect(() => {
         const fetchAppliedJobs = async () => {
             try {
-                const res = await axios.get(`${APPLICATION_API_ENDPOINT}/get`,{
+                const res = await axios.get(`${APPLICATION_API_ENDPOINT}/get`, {
                     withCredentials: true,
                 });
                 if(res.data.success){
@@ -17,6 +17,8 @@ const useGetAllAppliedJobs = () => {
                 }
             } catch (error) {
                 console.error(error);
+                // Agar application na mile ya naya user ho toh state ko empty array se reset kar do
+                dispatch(setAllAppliedJobs([]));
             }
         };
         fetchAppliedJobs();
